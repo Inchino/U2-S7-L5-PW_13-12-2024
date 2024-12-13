@@ -1,5 +1,5 @@
 const productsURL = "https://striveschool-api.herokuapp.com/api/product/";
-const productsWrappers = document.querySelector("#products-wrapper");
+const productsWrapper = document.querySelector("#products-wrapper");
 const shoppingCart = document.querySelector("#shopping-cart");
 
 let shoppingCartList = [];
@@ -19,7 +19,7 @@ async function readList() {
     if (productList.length > 0) {
       renderCards(productList);
     } else {
-      productsWrappers.innerHTML = "";
+      productsWrapper.innerHTML = "";
       return;
     }
   } catch (error) {
@@ -37,7 +37,7 @@ const readList = function () {
       if (res.ok) {
         return res.json()
       } else {
-        throw new Error('Error getting the products')
+        throw new Error('Errore nella ricezione dei prodotti')
       }
     })
     .then((data) => {
@@ -49,7 +49,7 @@ const readList = function () {
 }
 
 function renderCards(products) {
-  productsWrappers.innerHTML = "";
+  productsWrapper.innerHTML = "";
 
   products.forEach((product) => {
     const productSelected =
@@ -57,7 +57,7 @@ function renderCards(products) {
         (cardProduct) => cardProduct.title === product.title
       ) !== -1;
 
-    productsWrappers.innerHTML += `
+    productsWrapper.innerHTML += `
           <div class="col">
             <div class="card shadow-sm h-100 ${
               productSelected ? "selected" : ""

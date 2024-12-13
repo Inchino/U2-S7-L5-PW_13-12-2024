@@ -23,11 +23,11 @@ class Product {
 
 document.addEventListener("DOMContentLoaded", init);
 
-/*
+
 function init() {
     readList();
-}*/
-
+}
+/*
 function init() {
   btnSendForm.setAttribute("disabled", "true");
   readList();
@@ -45,7 +45,7 @@ btnSendForm.addEventListener("click", function (e) {
     return;
   }
 });
-
+*/
 const checkValidity = () => {
   let validity = true;
   if (productName.value === "") {

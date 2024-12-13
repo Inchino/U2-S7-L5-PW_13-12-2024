@@ -3,7 +3,7 @@ const productsWrappers = document.querySelector("#products-wrapper");
 const shoppingCart = document.querySelector("#shopping-cart");
 
 let shoppingCartList = [];
-
+/*
 async function readList() {
   try {
     let read = await fetch(productsURL, {
@@ -25,8 +25,8 @@ async function readList() {
   } catch (error) {
     console.log("Errore nel recupero dei dati: ", error);
   }
-}
-/*
+}*/
+
 const readList = function () {
   fetch( productsURL, {
     headers: {
@@ -46,7 +46,7 @@ const readList = function () {
     .catch((err) => {
       console.log(err)
   })
-}*/
+}
 
 function renderCards(products) {
   productsWrappers.innerHTML = "";
@@ -73,8 +73,8 @@ function renderCards(products) {
                 <p class="card-text bg-dark mb-2">${product.description}</p>
                 <p class="fs-4">${product.price}€</p>
                 <div>
-                    <button class="btn btn-danger" onclick="addToCart()">Compra ora</button>
-                    <button class="btn btn-outline-danger" onclick="skipMe(event)">Scarta</button>
+                    <a href="/backOffice.html"><button class="btn btn-warning" >Modifica</button></a>
+                    <a href="/details.html"><button class="btn btn-primary">Scopri di più</button></a>
                 </div>
               </div>
             </div>

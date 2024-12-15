@@ -1,6 +1,3 @@
-const url = new URLSearchParams(window.location.search);
-const detailProductId = url.get("_id");
-
 const dName = document.getElementById("dName");
 const dDesc = document.getElementById("dDesc");
 const dBrand = document.getElementById("dBrand");

@@ -92,7 +92,7 @@ const manageProduct = async (id) => {
   }
 };
 
-const deleteItem = async (id) => {
+const deleteProduct = async (id) => {
   try {
     await fetch(productsURL + id, {
       method: "DELETE",
@@ -105,6 +105,14 @@ const deleteItem = async (id) => {
   myForm.reset();
   /*btnSendForm.setAttribute('disabled', 'true');*/
 };
+
+btnResetForm.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (id) {
+    deleteProduct();
+    console.log("Cancellato");
+  }
+});
 
 const modifyProduct = async (id) => {
   productMod.productName = productName.value;

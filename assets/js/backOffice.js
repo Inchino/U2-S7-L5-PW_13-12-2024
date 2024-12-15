@@ -21,7 +21,7 @@ class Product {
   }
 }
 
-document.addEventListener("load", init());
+document.addEventListener("load", init);
 
 function init() {
   readList();
@@ -35,9 +35,9 @@ function init() {
 
 btnSendForm.addEventListener("click", function (e) {
   e.preventDefault();
-  if (check(true) && !productMod) {
+  if (check() && !productMod) {
     manageProduct();
-  } else if (check(true) && productMod) {
+  } else if (check() && productMod) {
     modifyProduct(productMod.id);
   } else {
     return;
@@ -74,6 +74,7 @@ const manageProduct = async (id) => {
         body: JSON.stringify(newProduct),
         headers: {
           Authorization: apiKey,
+          "Content-Type": "application/json",
         },
       });
       if (!response.ok) {
@@ -117,6 +118,7 @@ const modifyProduct = async (id) => {
       body: JSON.stringify(productMod),
       headers: {
         Authorization: apiKey,
+        "Content-Type": "application/json",
       },
     });
     window.location.href = "index.html";

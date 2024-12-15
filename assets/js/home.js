@@ -48,7 +48,7 @@ const readList = function () {
   })
 }*/
 
-document.addEventListener("load", init());
+document.addEventListener("load", init);
 
 function init() {
   readList();

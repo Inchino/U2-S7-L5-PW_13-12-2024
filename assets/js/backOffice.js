@@ -21,72 +21,45 @@ class Product {
   }
 }
 
-document.addEventListener('load', init());
+document.addEventListener("load", init());
 
 function init() {
-    readList();
+  readList();
 }
 
 /*
 function init() {
   btnSendForm.setAttribute("disabled", "true");
   readList();
-}
+}*/
 
 btnSendForm.addEventListener("click", function (e) {
   e.preventDefault();
-  if (checkValidity() && !productMod) {
-    formError.innerText = "";
+  if (check(true) && !productMod) {
     manageProduct();
-  } else if (checkValidity() && productMod) {
-    formError.innerText = "";
+  } else if (check(true) && productMod) {
     modifyProduct(productMod.id);
   } else {
     return;
   }
 });
 
-
-btnSendForm.addEventListener('click', function (e) {
-  e.preventDefault();
-  if (checkValidity() && !userMod) {
-      formError.innerText = '';
-      manageItem();
-  } else if (checkValidity() && userMod) {
-      formError.innerText = '';
-      modifyItem(userMod.id);
+function check() {
+  if (
+    productName.value &&
+    brandName.value &&
+    description.value &&
+    urlImg.value &&
+    price.value
+  ) {
+    return true;
   } else {
-      return;
+    alert("Devi riempire tutti i campi!");
+    return false;
   }
-});
+}
 
-const checkValidity = () => {
-  let validity = true;
-  if (productName.value === "") {
-    formError.innerText = "Nome del prodotto obbligatorio";
-    validity = false;
-  } else if (brandName.value === "") {
-    formError.innerText = "Nome del brand obbligatorio";
-    validity = false;
-  } else if (description.value === "") {
-    formError.innerText = "Descrizione del prodotto obbligatoria";
-    validity = false;
-  } else if (urlImg.value === "") {
-    formError.innerText = "Immagine del prodotto obbligatoria";
-    validity = false;
-  } else if (!price.value || isNaN(price.value) || Number(price.value) <= 0) {
-    formError.innerText = "Prezzo del prodotto non valido";
-    validity = false;
-  }
-  if (validity) {
-    btnSendForm.removeAttribute("disabled");
-  } else {
-    btnSendForm.setAttribute("disabled", "true");
-  }
-  return validity;
-};*/
-
-const manageProduct = async id => {
+const manageProduct = async (id) => {
   if (!id) {
     let newProduct = new Product(
       productName.value,
@@ -97,7 +70,7 @@ const manageProduct = async id => {
     );
     try {
       let response = await fetch(productsURL, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(newProduct),
         headers: {
           Authorization: apiKey,
@@ -118,7 +91,7 @@ const manageProduct = async id => {
   }
 };
 
-const deleteItem = async id => {
+const deleteItem = async (id) => {
   try {
     await fetch(productsURL + id, {
       method: "DELETE",
@@ -132,7 +105,7 @@ const deleteItem = async id => {
   /*btnSendForm.setAttribute('disabled', 'true');*/
 };
 
-const modifyProduct = async id => {
+const modifyProduct = async (id) => {
   productMod.productName = productName.value;
   productMod.brandName = brandName.value;
   productMod.description = description.value;
@@ -155,3 +128,25 @@ const modifyProduct = async id => {
   myForm.reset();
   /*btnSendForm.setAttribute('disabled', 'true');*/
 };
+
+function printForm(id) {
+  for (let i = 0; i < productList.length; i++) {
+    if (id == productList[i].id) {
+      productMod = new Product(
+        productList[i].productName,
+        productList[i].brandName,
+        productList[i].description,
+        productList[i].urlImg,
+        productList[i].price
+      );
+      productMod.id = productList[i].id;
+    }
+  }
+  productName.value = productMod.productName;
+  brandName.value = productMod.brandName;
+  description.value = productMod.description;
+  urlImg.value = productMod.urlImg;
+  price.value = productMod.price;
+
+  /*btnSendForm.removeAttribute("disabled");*/
+}

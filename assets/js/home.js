@@ -1,5 +1,6 @@
 const productsURL = "https://striveschool-api.herokuapp.com/api/product/";
-const apiKey = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM";
+const apiKey =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM";
 const productsWrapper = document.querySelector("#products-wrapper");
 const shoppingCart = document.querySelector("#shopping-cart");
 
@@ -10,13 +11,14 @@ async function readList() {
   try {
     let read = await fetch(productsURL, {
       headers: {
-        Authorization: apiKey
+        Authorization: apiKey,
       },
     });
     productList = await read.json();
     if (productList.length > 0) {
+      printForm(id);
       renderCards();
-    }else{
+    } else {
       console.log(productList);
     }
   } catch (error) {

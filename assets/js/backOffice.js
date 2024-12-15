@@ -4,11 +4,11 @@ const brandName = document.getElementById("brandName");
 const description = document.getElementById("description");
 const urlImg = document.getElementById("urlImg");
 const price = document.getElementById("price");
+
 const btnSendForm = document.getElementById("sendForm");
 const btnResetForm = document.getElementById("resetForm");
 const formError = document.getElementById("formError");
 
-let productList = [];
 let productMod = {};
 
 class Product {
@@ -21,11 +21,12 @@ class Product {
   }
 }
 
-document.addEventListener("DOMContentLoaded", init());
+document.addEventListener('load', init());
 
 function init() {
     readList();
 }
+
 /*
 function init() {
   btnSendForm.setAttribute("disabled", "true");
@@ -36,7 +37,7 @@ btnSendForm.addEventListener("click", function (e) {
   e.preventDefault();
   if (checkValidity() && !productMod) {
     formError.innerText = "";
-    manageProducts();
+    manageProduct();
   } else if (checkValidity() && productMod) {
     formError.innerText = "";
     modifyProduct(productMod.id);
@@ -44,7 +45,21 @@ btnSendForm.addEventListener("click", function (e) {
     return;
   }
 });
-*/
+
+
+btnSendForm.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (checkValidity() && !userMod) {
+      formError.innerText = '';
+      manageItem();
+  } else if (checkValidity() && userMod) {
+      formError.innerText = '';
+      modifyItem(userMod.id);
+  } else {
+      return;
+  }
+});
+
 const checkValidity = () => {
   let validity = true;
   if (productName.value === "") {
@@ -69,9 +84,9 @@ const checkValidity = () => {
     btnSendForm.setAttribute("disabled", "true");
   }
   return validity;
-};
+};*/
 
-const manageProducts = async (id) => {
+const manageProduct = async id => {
   if (!id) {
     let newProduct = new Product(
       productName.value,
@@ -81,43 +96,43 @@ const manageProducts = async (id) => {
       price.value
     );
     try {
-      const response = await fetch(productsURL, {
-        method: "POST",
+      let response = await fetch(productsURL, {
+        method: 'POST',
         body: JSON.stringify(newProduct),
         headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM",
+          Authorization: apiKey,
         },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      window.location.href = "index.html";
     } catch (error) {
       console.log(error);
     }
     readList();
     myForm.reset();
-    btnSendForm.setAttribute("disabled", "true");
+    /*btnSendForm.setAttribute("disabled", "true");*/
   } else {
     printForm(id);
   }
 };
 
-const deleteItem = async (id) => {
+const deleteItem = async id => {
   try {
     await fetch(productsURL + id, {
       method: "DELETE",
     });
+    window.location.href = "index.html";
   } catch (error) {
     console.log(error);
-    formError.innerText = "Errore durante l'eliminazione del prodotto.";
   }
   readList();
   myForm.reset();
-  btnSendForm.setAttribute('disabled', 'true');
+  /*btnSendForm.setAttribute('disabled', 'true');*/
 };
 
-const modifyProduct = async (id) => {
+const modifyProduct = async id => {
   productMod.productName = productName.value;
   productMod.brandName = brandName.value;
   productMod.description = description.value;
@@ -128,38 +143,15 @@ const modifyProduct = async (id) => {
       method: "PUT",
       body: JSON.stringify(productMod),
       headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM",
+        Authorization: apiKey,
       },
     });
+    window.location.href = "index.html";
   } catch (error) {
     console.log(error);
   }
   productMod = {};
   readList();
   myForm.reset();
-  btnSendForm.innerText = "AGGIUNGI";
+  /*btnSendForm.setAttribute('disabled', 'true');*/
 };
-
-function printForm(id) {
-  for (let i = 0; i < productList.length; i++) {
-    if (id == productList[i].id) {
-        productMod = new Product(
-            productList[i].productName,
-            productList[i].brandName,
-            productList[i].description,
-            productList[i].urlImg,
-            productList[i].price
-          );
-          productMod.id = productList[i].id;
-    }
-  }
-  productName.value = productMod.productName;
-  brandName.value = productMod.brandName;
-  description.value = productMod.description;
-  urlImg.value = productMod.urlImg;
-  price.value = productMod.price;
-
-  btnSendForm.innerText = "MODIFICA";
-  btnSendForm.removeAttribute("disabled");
-}

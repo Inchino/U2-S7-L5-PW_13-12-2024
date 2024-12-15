@@ -1,32 +1,30 @@
 const productsURL = "https://striveschool-api.herokuapp.com/api/product/";
+const apiKey = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM";
 const productsWrapper = document.querySelector("#products-wrapper");
 const shoppingCart = document.querySelector("#shopping-cart");
 
+let productList = [];
 let shoppingCartList = [];
-/*
+
 async function readList() {
   try {
     let read = await fetch(productsURL, {
       headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM",
+        Authorization: apiKey
       },
     });
-    if (!read.ok) {
-      throw new Error(`Errore HTTP: ${read.status}`);
-    }
     productList = await read.json();
     if (productList.length > 0) {
-      renderCards(productList);
-    } else {
-      productsWrapper.innerHTML = "";
-      return;
+      renderCards();
+    }else{
+      console.log(productList);
     }
   } catch (error) {
     console.log("Errore nel recupero dei dati: ", error);
   }
-}*/
+}
 
+/*
 const readList = function () {
   fetch( productsURL, {
     headers: {
@@ -46,12 +44,18 @@ const readList = function () {
     .catch((err) => {
       console.log(err)
   })
+}*/
+
+document.addEventListener("load", init());
+
+function init() {
+  readList();
 }
 
-function renderCards(products) {
+function renderCards(productList) {
   productsWrapper.innerHTML = "";
 
-  products.forEach((product) => {
+  productList.forEach((product) => {
     const productSelected =
       shoppingCartList.findIndex(
         (cardProduct) => cardProduct.title === product.title

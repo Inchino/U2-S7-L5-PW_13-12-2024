@@ -5,7 +5,7 @@ const description = document.getElementById("description");
 const urlImg = document.getElementById("urlImg");
 const price = document.getElementById("price");
 
-const btnSendForm = document.getElementById("sendForm");
+const btnSendForm = document.getElementById("sendForm")
 const btnResetForm = document.getElementById("resetForm");
 const formError = document.getElementById("formError");
 

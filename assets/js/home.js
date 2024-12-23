@@ -6,6 +6,8 @@ const shoppingCart = document.querySelector("#shopping-cart");
 
 let productList = [];
 let shoppingCartList = [];
+let nextPage;
+let newUrl;
 
 async function readList() {
   try {
@@ -16,8 +18,8 @@ async function readList() {
     });
     productList = await read.json();
     if (productList.length > 0) {
-      printForm(id);
-      renderCards();
+      //printForm(id);
+      renderCards(productList);
     } else {
       console.log(productList);
     }
@@ -48,7 +50,7 @@ const readList = function () {
   })
 }*/
 
-document.addEventListener("load", init);
+window.addEventListener("load", init());
 
 function init() {
   readList();
@@ -79,12 +81,25 @@ function renderCards(productList) {
                 <p class="card-text bg-dark mb-2">${product.description}</p>
                 <p class="fs-4">${product.price}€</p>
                 <div>
-                    <a href="/backOffice.html"><button class="btn btn-warning" >Modifica</button></a>
-                    <a href="/details.html"><button class="btn btn-primary">Scopri di più</button></a>
+                    <button class="btn btn-danger" onclick="modify(e)">Modifica</button>
+                      <button class="btn btn-outline-danger" onclick="details(e)">Dettagli</button>
                 </div>
               </div>
             </div>
           </div>
       `;
+    const modify = (e) => {
+      e.preventDefault();
+      nextPage = "backOffice.html";
+      newUrl = `${nextPage}?_id=${productList[i]._id}`;
+      window.location.href = newUrl;
+    };
+
+    const details = (e) => {
+      e.preventDefault();
+      nextPage = "details.html";
+      newUrl = `${nextPage}?_id=${productList[i]._id}`;
+      window.location.href = newUrl;
+    };
   });
 }

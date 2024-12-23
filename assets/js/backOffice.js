@@ -1,3 +1,10 @@
+const productsURL = "https://striveschool-api.herokuapp.com/api/product/";
+const apiKey =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVjMDFlZGQyMjA3MTAwMTVkZTJmNWQiLCJpYXQiOjE3MzQwODQzOTAsImV4cCI6MTczNTI5Mzk5MH0.BSUAJ-aIAB9ObUGC4pG3En0XA35-1CMdW7v4OZLwRhM";
+
+const url = new URLSearchParams(window.location.search);
+const productModifyId = url.get("_id");
+
 const myForm = document.getElementById("myForm");
 const productName = document.getElementById("productName");
 const brandName = document.getElementById("brandName");
@@ -7,9 +14,12 @@ const price = document.getElementById("price");
 
 const btnSendForm = document.getElementById("sendForm")
 const btnResetForm = document.getElementById("resetForm");
+const btnDelete = document.getElementById("btnDelete");
 const formError = document.getElementById("formError");
 
-let productMod = {};
+//let product;
+//let newProduct;
+let productId = null || productModifyId;
 
 class Product {
   constructor(_productName, _brandName, _description, _urlImg, _price) {
@@ -21,109 +31,94 @@ class Product {
   }
 }
 
-document.addEventListener("load", init);
+window.addEventListener("load", init());
 
 function init() {
-  readList();
+  if (productId) {
+    btnSendForm.innerText = "Modifica";
+    btnDelete.style.display = "inline-block";
+    readList();
+  }
 }
 
 /*
 function init() {
-  btnSendForm.setAttribute("disabled", "true");
+  //btnSendForm.setAttribute("disabled", "true");
   readList();
 }*/
 
-btnSendForm.addEventListener("click", function (e) {
-  e.preventDefault();
-  if (check() && !productMod) {
-    manageProduct();
-  } else if (check() && productMod) {
-    modifyProduct(productMod.id);
-  } else {
-    return;
-  }
-});
-
-function check() {
-  if (
-    productName.value &&
-    brandName.value &&
-    description.value &&
-    urlImg.value &&
-    price.value
-  ) {
-    return true;
-  } else {
-    alert("Devi riempire tutti i campi!");
-    return false;
-  }
-}
-
-const manageProduct = async (id) => {
-  if (!id) {
-    let newProduct = new Product(
-      productName.value,
-      brandName.value,
-      description.value,
-      urlImg.value,
-      price.value
-    );
-    try {
-      let response = await fetch(productsURL, {
-        method: "POST",
-        body: JSON.stringify(newProduct),
-        headers: {
-          Authorization: apiKey,
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      window.location.href = "index.html";
-    } catch (error) {
-      console.log(error);
-    }
-    readList();
-    myForm.reset();
-    /*btnSendForm.setAttribute("disabled", "true");*/
-  } else {
-    printForm(id);
-  }
-};
-
-const deleteProduct = async (id) => {
+async function readList() {
   try {
-    await fetch(productsURL + id, {
-      method: "DELETE",
+    let response = await fetch(productsURL + productId, {
+      headers: {
+        Authorization: apiKey,
+      },
     });
-    window.location.href = "index.html";
+    const product = await response.json();
+    printForm(product);
+    console.log(product);
   } catch (error) {
     console.log(error);
   }
-  readList();
-  myForm.reset();
-  /*btnSendForm.setAttribute('disabled', 'true');*/
-};
+}
 
-btnResetForm.addEventListener("click", (e) => {
+function printForm(product) {
+  productName.value = product.name;
+  brandName.value = product.brand;
+  description.value = product.description;
+  urlImg.value = product.imageUrl;
+  price.value = product.price;
+}
+
+function check() {
+  if (
+    !productName.value ||
+    !brandName.value ||
+    !description.value ||
+    !urlImg.value ||
+    isNaN(price.value) ||
+    price.value <= 0
+  ) {
+    alert("Tutti i campi sono obbligatori e il prezzo deve essere valido!");
+    return null;
+  }
+  return new Product(
+    productName.value,
+    brandName.value,
+    description.value,
+    urlImg.value,
+    parseFloat(price.value)
+  );
+}
+/*
+btnSendForm.addEventListener("click", function (e) {
   e.preventDefault();
-  if (id) {
-    deleteProduct();
-    console.log("Cancellato");
+  check();
+  //console.log(newProduct);
+  if (!productId) {
+    manageProduct();
+  } else {
+    modifyProduct();
+  }
+});*/
+
+btnSendForm.addEventListener("click", (e) => {
+  e.preventDefault();
+  const newProduct = check();
+  if (newProduct) {
+    if (productId) {
+      modifyData(newProduct);
+    } else {
+      manageProduct(newProduct);
+    }
   }
 });
-
-const modifyProduct = async (id) => {
-  productMod.productName = productName.value;
-  productMod.brandName = brandName.value;
-  productMod.description = description.value;
-  productMod.urlImg = urlImg.value;
-  productMod.price = price.value;
+/*
+async function manageProduct(newProduct) {
   try {
-    await fetch(productsURL + id, {
-      method: "PUT",
-      body: JSON.stringify(productMod),
+    let response = await fetch(productsURL, {
+      method: "POST",
+      body: JSON.stringify(newProduct),
       headers: {
         Authorization: apiKey,
         "Content-Type": "application/json",
@@ -133,30 +128,78 @@ const modifyProduct = async (id) => {
   } catch (error) {
     console.log(error);
   }
-  productMod = {};
-  readList();
-  myForm.reset();
-  /*btnSendForm.setAttribute('disabled', 'true');*/
-};
+}*/
 
-function printForm(id) {
-  for (let i = 0; i < productList.length; i++) {
-    if (id == productList[i].id) {
-      productMod = new Product(
-        productList[i].productName,
-        productList[i].brandName,
-        productList[i].description,
-        productList[i].urlImg,
-        productList[i].price
-      );
-      productMod.id = productList[i].id;
+async function manageProduct(newProduct) {
+  try {
+    if (!newProduct || typeof newProduct !== "object") {
+      throw new Error("newProduct non è valido. Assicurati di passare un oggetto con i campi corretti.");
     }
-  }
-  productName.value = productMod.productName;
-  brandName.value = productMod.brandName;
-  description.value = productMod.description;
-  urlImg.value = productMod.urlImg;
-  price.value = productMod.price;
 
-  /*btnSendForm.removeAttribute("disabled");*/
+    console.log("newProduct inviato:", newProduct);
+
+    let response = await fetch(productsURL, {
+      method: "POST",
+      body: JSON.stringify(newProduct),
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Errore nella risposta del server: ${response.status} ${response.statusText}`);
+    }
+
+    console.log("Prodotto creato con successo!");
+    window.location.href = "index.html"; // Reindirizzamento dopo il successo
+  } catch (error) {
+    console.error("Errore durante la creazione del prodotto:", error);
+  }
 }
+
+
+async function modifyData(newProduct) {
+  try {
+    let response = await fetch(productsURL + productId, {
+      method: "PUT",
+      body: JSON.stringify(newProduct),
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/json",
+      },
+    });
+    window.location.href = "index.html";
+  } catch (error) {
+    console.log(error);
+  }
+}
+/*
+btnConfirmDelete.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (productId) {
+    deleteProduct();
+    console.log("Prodotto eliminato!");
+  }
+});*/
+/*
+btnDelete.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (confirm("Sei sicuro di voler eliminare questo prodotto?")) {
+    await deleteData();
+  }
+});
+
+async function deleteData() {
+  try {
+    let response = await fetch(productsURL + productId, {
+      method: "DELETE",
+      headers: {
+        Authorization: apiKey,
+      },
+    });
+    window.location.href = "index.html";
+  } catch (error) {
+    console.log(error);
+  }
+}*/
